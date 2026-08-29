@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { ClipboardCheck, MapPin, Search, FolderOpen } from "lucide-react";
+import { MapPin, Search, FolderOpen } from "lucide-react";
 import { getHomeStats } from "@/lib/actions/reports";
-import { signInAsGuest } from "@/lib/actions/auth";
+import { continueAsGuest } from "@/lib/actions/auth";
 import { getSessionUser } from "@/lib/auth/session";
+import { AppLogo } from "@/components/app-logo";
 import { LegalDisclaimer } from "@/components/legal-disclaimer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,12 +15,17 @@ export default async function HomePage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
-          Noida, Uttar Pradesh
-        </p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-          Parking verification
-        </h1>
+        <div className="flex items-center gap-3">
+          <AppLogo size={48} priority />
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+              Noida, Uttar Pradesh
+            </p>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+              Parking verification
+            </h1>
+          </div>
+        </div>
         <p className="mt-2 max-w-2xl text-sm text-zinc-600">
           Document a collection point and compare evidence against sourced
           authority records. This is not a booking app and not a legal ruling.
@@ -30,19 +35,11 @@ export default async function HomePage() {
       <div className="flex flex-col gap-2 md:flex-row md:items-center">
         <Button asChild className="h-14 w-full text-base md:w-auto md:px-8">
           <Link href={userId ? "/verify" : "/login"}>
-            <ClipboardCheck className="mr-2 size-5" />
             Verify Parking
           </Link>
         </Button>
         {!userId ? (
-          <form
-            action={async () => {
-              const result = await signInAsGuest();
-              if (result?.error) {
-                redirect(`/login?error=${encodeURIComponent(result.error)}`);
-              }
-            }}
-          >
+          <form action={continueAsGuest}>
             <Button type="submit" variant="outline" className="h-14 w-full text-base md:w-auto md:px-8">
               Continue as guest
             </Button>

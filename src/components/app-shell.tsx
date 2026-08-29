@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ClipboardCheck } from "lucide-react";
 import { signOut } from "@/lib/actions/auth";
+import { AppLogo } from "@/components/app-logo";
 import { Button } from "@/components/ui/button";
 import type { Profile } from "@/lib/types";
 import { isStaff } from "@/lib/auth/roles";
@@ -25,7 +25,7 @@ export function AppShell({
       <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <ClipboardCheck className="size-5" />
+            <AppLogo size={28} priority />
             <span className="text-sm sm:text-base">Noida Parking Verify</span>
           </Link>
           <nav className="hidden items-center gap-4 text-sm text-zinc-600 md:flex">

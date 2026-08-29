@@ -8,13 +8,15 @@ export default function manifest(): MetadataRoute.Manifest {
       "Evidence-based parking verification for Noida. Not a legal determination.",
     start_url: "/",
     display: "standalone",
-    background_color: "#fafafa",
-    theme_color: "#18181b",
+    background_color: "#0B3D91",
+    theme_color: "#0B3D91",
     lang: "en-IN",
     icons: [
       { src: "/icons/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
-      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   };
 }

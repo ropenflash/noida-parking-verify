@@ -6,6 +6,7 @@ import { signUpWithPassword } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AppLogo } from "@/components/app-logo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function SignupPage() {
@@ -15,7 +16,10 @@ export default function SignupPage() {
   return (
     <Card className="mx-auto max-w-md">
       <CardHeader>
-        <CardTitle>Create account</CardTitle>
+        <div className="mb-3 flex justify-center">
+          <AppLogo size={56} priority />
+        </div>
+        <CardTitle className="text-center">Create account</CardTitle>
       </CardHeader>
       <CardContent>
         <form

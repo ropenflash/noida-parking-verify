@@ -21,6 +21,13 @@ export async function signInAsGuest() {
   redirect("/verify");
 }
 
+export async function continueAsGuest() {
+  const result = await signInAsGuest();
+  if (result?.error) {
+    redirect(`/login?error=${encodeURIComponent(result.error)}`);
+  }
+}
+
 export async function signUpWithPassword(formData: FormData) {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");

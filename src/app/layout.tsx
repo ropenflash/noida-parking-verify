@@ -25,6 +25,14 @@ export const metadata: Metadata = {
     "Evidence-based parking verification and reporting for Noida, Uttar Pradesh. Not a legal determination.",
   applicationName: "Noida Parking Verify",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+  },
   appleWebApp: {
     capable: true,
     title: "Noida Parking Verify",
@@ -33,7 +41,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#18181b",
+  themeColor: "#0B3D91",
   width: "device-width",
   initialScale: 1,
 };

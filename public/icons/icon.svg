@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="72" fill="#18181b"/>
-  <path d="M140 280l70 70 162-176" fill="none" stroke="#fafafa" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Noida Parking Verify">
+  <rect width="512" height="512" fill="#0B3D91"/>
+  <path fill="#ffffff" d="M168 118h118c78 0 126 42 126 118s-48 118-126 118H220v80h-52V118zm52 188h62c46 0 74-24 74-70s-28-70-74-70h-62v140z"/>
+  <circle cx="392" cy="392" r="64" fill="#F5C518"/>
+  <path fill="none" stroke="#0B3D91" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" d="M360 394l22 22 42-46"/>
 </svg>
