@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -126,5 +125,123 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+.assistant-shell {
+  color: #f4f7fb;
+  background: #05060d;
+}
+
+.assistant-orb {
+  isolation: isolate;
+}
+
+.assistant-orb-glow,
+.assistant-orb-core,
+.assistant-orb-ring {
+  position: absolute;
+  inset: 12%;
+  border-radius: 9999px;
+}
+
+.assistant-orb-glow {
+  inset: -8%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.32), transparent 68%);
+  filter: blur(18px);
+}
+
+.assistant-orb-core {
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.85), transparent 18%),
+    radial-gradient(circle at 50% 45%, rgba(34, 211, 238, 0.95), rgba(79, 70, 229, 0.55) 62%, rgba(15, 23, 42, 0.9) 100%);
+  box-shadow:
+    0 0 40px rgba(34, 211, 238, 0.35),
+    inset 0 0 24px rgba(255, 255, 255, 0.18);
+}
+
+.assistant-orb-ring {
+  inset: 4%;
+  border: 1px solid rgba(165, 243, 252, 0.28);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent 78%);
+}
+
+.assistant-orb[data-state="IDLE"] .assistant-orb-core,
+.assistant-orb[data-state="IDLE"] .assistant-orb-glow {
+  animation: assistant-breathe 3.6s ease-in-out infinite;
+}
+
+.assistant-orb[data-state="LISTENING"] .assistant-orb-core,
+.assistant-orb[data-state="LISTENING"] .assistant-orb-glow {
+  animation: assistant-pulse 1.15s ease-in-out infinite;
+}
+
+.assistant-orb[data-state="THINKING"] .assistant-orb-ring,
+.assistant-orb[data-state="EXECUTING_TOOL"] .assistant-orb-ring {
+  animation: assistant-spin 4s linear infinite;
+}
+
+.assistant-orb[data-state="THINKING"] .assistant-orb-core,
+.assistant-orb[data-state="EXECUTING_TOOL"] .assistant-orb-core {
+  animation: assistant-think 1.8s ease-in-out infinite;
+}
+
+.assistant-orb[data-state="SPEAKING"] .assistant-orb-core {
+  animation: assistant-pulse 0.9s ease-in-out infinite;
+}
+
+.assistant-orb[data-state="ERROR"] .assistant-orb-core {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(248, 113, 113, 0.9), rgba(127, 29, 29, 0.9) 70%);
+  animation: assistant-breathe 2s ease-in-out infinite;
+}
+
+.assistant-orb[data-state="TRANSCRIBING"] .assistant-orb-core {
+  animation: assistant-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes assistant-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.88;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes assistant-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes assistant-think {
+  0%,
+  100% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  50% {
+    filter: hue-rotate(25deg) brightness(1.12);
+  }
+}
+
+@keyframes assistant-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistant-orb-core,
+  .assistant-orb-glow,
+  .assistant-orb-ring {
+    animation: none !important;
   }
 }

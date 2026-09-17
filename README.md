@@ -1,92 +1,42 @@
-# Noida Parking Verify
+# Assistant
 
-Evidence-based parking verification and reporting for **Noida, Uttar Pradesh**. This is not a booking app and **not a legal determination**.
+A personal AI assistant web app. Talk with text today. Use **Talk** to turn on the browser microphone (push-to-talk). Speech-to-text is the next milestone.
 
-The app helps a person standing at a collection point record location, photos, operator, payment, and receipt details, then compare that evidence with sourced authority records.
+Open [http://localhost:3000](http://localhost:3000).
 
-Seeded authority rows are marked **DEMO DATA**. Do not present them as live official extracts.
+---
 
-## Stack
+## Architecture
 
-- Next.js 16 (App Router) + TypeScript + Tailwind CSS + shadcn/ui
-- Supabase (Postgres + PostGIS, Auth, Storage, RLS)
-- PWA (manifest + service worker + offline draft queue)
-- Zod validation and a pure TypeScript verification engine
+```text
+Browser  →  Next.js /api/chat  →  LLMProvider
+                                      │
+                         Ollama (preferred) or OpenAI fallback
+```
 
-## Local setup
+The browser never calls OpenAI or Ollama directly. API keys stay on the server.
 
-1. Copy environment variables:
+Microphone access uses `navigator.mediaDevices.getUserMedia({ audio: true })` only after an explicit **Talk** click. **Stop** releases the tracks. There is no always-listening wake word.
 
-   ```bash
-   cp .env.example .env.local
-   ```
+---
 
-   Fill:
+## Requirements
 
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `NEXT_PUBLIC_SITE_URL` (for example `http://localhost:3000`)
+- Node.js 20+
+- Optional local [Ollama](https://ollama.com) with a **chat** model
+- Optional `OPENAI_API_KEY` for cloud fallback
+- Chrome (or another Chromium browser) for the most reliable microphone permission flow
+- HTTPS in production; `localhost` is fine for development
 
-   Never put a service-role key in `NEXT_PUBLIC_*` variables.
+---
 
-2. Install and run:
-
-   ```bash
-   npm install
-   npm run dev
-   ```
-
-3. Open [http://localhost:3000](http://localhost:3000).
-
-## Supabase
-
-A dedicated project should be used (do not mix this schema into an unrelated database).
-
-### Apply schema
-
-The full schema lives in `supabase/migrations/20260829120000_init.sql`. Demo rows are in `supabase/seed.sql`.
-
-With the Supabase CLI (linked project):
+## Installation
 
 ```bash
-npx supabase db push
-psql "$DATABASE_URL" -f supabase/seed.sql
+npm install
+cp .env.example .env.local
+npm run dev
 ```
-
-Or run those SQL files in the Supabase SQL editor.
-
-The schema enables PostGIS, RLS, storage buckets `evidence` and `authority-documents`, and RPCs:
-
-- `find_nearby_parking_sites(lat, long, radius_m)`
-- `find_nearby_public_reports(lat, long, radius_m)`
-
-### Auth and roles
-
-Roles live on `profiles.role`: `USER`, `MODERATOR`, `ADMIN`. They are **not** taken from user-editable metadata.
-
-After you create the first account, promote it in the SQL editor:
-
-```sql
-update public.profiles
-set role = 'ADMIN'
-where id = '<auth user uuid>';
-```
-
-If email confirmation is enabled, confirm the user in the Auth dashboard or disable confirmation for development.
-
-### Storage
-
-Evidence uploads go to `evidence/{user_id}/...`. Users can only write into their own folder. Staff can read evidence for review. Authority documents are readable by signed-in users and writable by staff.
-
-## Verification engine
-
-Scoring is configurable in `verification_config`. The TypeScript engine in `src/lib/verification/engine.ts` produces an **internal evidence score**, not a legal finding.
-
-Important rule: a personal UPI recipient (for example “Arvind Yadav”) is **not** treated as proof of unauthorised collection. That case classifies as **Needs verification**.
-
-Overcharging is only applied when there is an **exact** site match and a sourced approved rate.
-
-## Tests
 
 ```bash
 npm test
@@ -95,26 +45,92 @@ npm run typecheck
 npm run build
 ```
 
-SQL notes for RLS checks are in `supabase/tests/rls.sql`.
+---
 
-## PWA
+## Environment variables
 
-- Manifest: `src/app/manifest.ts`
-- Service worker: `public/sw.js`
-- Offline page: `/offline` and `public/offline.html`
+```env
+LLM_PROVIDER=auto
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=
+OPENAI_API_KEY=
+OPENAI_MODEL=
+NEXT_PUBLIC_ASSISTANT_NAME=Assistant
+```
 
-On Android Chrome: open the deployed HTTPS URL → menu → **Install app**.
+`LLM_PROVIDER` may be `auto`, `ollama`, or `openai`.
 
-On iOS Safari: Share → **Add to Home Screen**.
+- `auto`: use Ollama when a chat-capable model is available, otherwise OpenAI
+- `ollama`: never fall back
+- `openai`: OpenAI only
 
-If you submit while offline, the UI stores a draft on the device and shows **Saved on this device — waiting for connection**. That draft is not treated as submitted to Supabase.
+Never prefix secrets with `NEXT_PUBLIC_`.
 
-## Vercel
+On Vercel, Ollama on `localhost` is not available, so configure `OPENAI_API_KEY` (and optionally `OPENAI_MODEL`) in the project environment.
 
-1. Import the Git repository in Vercel.
-2. Set the same environment variables as `.env.example`.
-3. Deploy. `npm run build` is the production build.
+---
 
-## Legal wording
+## Ollama
 
-The product uses phrases such as “evidence suggests”, “could not verify”, and “potentially unauthorised”. It does not label a person as a criminal, fraudster, or thief.
+```bash
+ollama pull llama3.2
+ollama list
+```
+
+Embedding-only models such as `nomic-embed-text` are ignored. Leave `OLLAMA_MODEL` empty to pick the first chat-capable installed model.
+
+---
+
+## Voice (Milestone 2)
+
+1. Click **Talk**.
+2. The browser asks for microphone permission.
+3. The UI shows **Listening** and **Microphone active**.
+4. Click **Stop** to release the microphone.
+
+Speech is not transcribed yet. You can still type messages.
+
+---
+
+## Debug mode
+
+Settings → Developer mode shows provider, model, state, and request latency. Secrets are never shown.
+
+---
+
+## Tests
+
+```bash
+npm test
+```
+
+Covers provider selection, Ollama fallback, OpenAI (mocked), orchestration, chat validation, health (no secrets), state transitions including `IDLE → LISTENING → IDLE`, and push-to-talk error mapping.
+
+---
+
+## Troubleshooting
+
+**I couldn't connect to the AI service.**  
+Install a chat model in Ollama, or set `OPENAI_API_KEY`. On Vercel, Ollama is not used unless you point `OLLAMA_BASE_URL` at a reachable host.
+
+**Microphone permission was denied.**  
+Allow the mic in the browser site settings, or keep typing.
+
+**This browser cannot access the microphone.**  
+Use a current Chrome/Edge build over HTTPS or localhost.
+
+---
+
+## Roadmap
+
+| Milestone | Status |
+| --- | --- |
+| 1 Text chat + Ollama/OpenAI | Done |
+| 2 Browser microphone (push-to-talk) | Done |
+| 3 Speech-to-text | Next |
+| 4 Text-to-speech | Planned |
+| 5 Full spoken conversation | Planned |
+| 6 Voice UX / interruption | Planned |
+| 7 Tools (calculator, time, weather, search) | Planned |
+| 8 Conversation memory | Planned |
+| 9 Home Assistant boundary | Planned |
